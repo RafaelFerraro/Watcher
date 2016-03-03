@@ -3,13 +3,14 @@ source 'https://rubygems.org'
 
 ruby '2.2.4'
 
-gem 'daemons'
-gem 'listen', '~> 3.0'
+gem 'daemons', require: false
+gem 'pdf-reader'
 
 group :development do
   gem 'pry'
 end
 
-group :test do
+group :test, :development do
   gem 'rspec'
+  gem 'guard-rspec'
 end

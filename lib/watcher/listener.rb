@@ -1,19 +1,33 @@
-require 'listen'
-
 module Watcher
+  # this class listen to a directory for any pdf file that has into that
   class Listener
     def self.listen
-      folder = Watcher.config.folder
-      listener = Listen.to(folder) do |modified, added, removed|
-        Watcher::Logger.info("modified file #{modified}")
-        Watcher::Logger.info("added file #{added}")
-        Watcher::Logger.info("removed file #{removed}")
+      loop do
+        run
+        sleep(10)
       end
-
-      Watcher::Logger.info("Listening for files in #{folder}")
-      listener.start
-
-      sleep(100)
     end
+
+    def self.run
+      files.each { |file| exec(file) if is_pdf?(file) }
+    end
+
+    def self.exec(file)
+      # Watcher::Logger.info("A new pdf file was found - #{file}")
+      pdf = PDF::Reader.new(file)
+
+      pdf.pages.map { |page| page.text }
+    end
+
+    private
+
+    def self.is_pdf?(file)
+      File.extname(file) == ".pdf"
+    end
+
+    def self.files
+      Dir[Watcher.config.files].to_a
+    end
+
   end
 end
