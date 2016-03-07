@@ -45,15 +45,27 @@ describe Watcher::Listener do
     let(:first_page) { double("PDF::Reader::Page", text: 'Text within pdf file') }
     let(:pdf_reader) { double("PDF::Reader", pages: [first_page]) }
 
-    it 'creates a new pdf reader' do
-      expect(PDF::Reader).to receive(:new).with('file_in_args'){ pdf_reader }
-      described_class.exec('file_in_args')
+    it 'moves the file to tmp folder' do
+      allow(Watcher::FileManager).to receive(:create_pdf){
+        pdf_reader
+      }
+
+      expect(Watcher::FileManager).to receive(:move_to_tmp).with('argument file'){
+        'tmp file'
+      }
+      Watcher::Listener.exec('argument file')
     end
 
-    it 'returns the text within page' do
-      allow(PDF::Reader).to receive(:new){ pdf_reader }
+    it 'creates a pdf reader to access your text/values' do
+      allow(Watcher::FileManager).to receive(:move_to_tmp){
+        'tmp file'
+      }
 
-      expect(described_class.exec('file_in_args')).to eq(["Text within pdf file"])
+      expect(Watcher::FileManager).to receive(:create_pdf).with(
+        'tmp file'
+      ){ pdf_reader }
+
+      Watcher::Listener.exec('argument file')
     end
   end # .exec
 end

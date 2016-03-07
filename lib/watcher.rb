@@ -3,6 +3,7 @@ require 'ostruct'
 require 'yaml'
 require 'pdf-reader'
 require './lib/watcher/listener.rb'
+require './lib/watcher/file_manager.rb'
 # require './lib/logger.rb'
 
 # This class will initialize the daemonize application

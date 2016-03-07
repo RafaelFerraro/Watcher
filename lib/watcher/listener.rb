@@ -9,21 +9,20 @@ module Watcher
     end
 
     def self.run
-      files.each { |file| exec(file) if is_pdf?(file) }
+      files.each { |file| exec(file) if FileManager.is_pdf?(file) }
     end
 
     def self.exec(file)
       # Watcher::Logger.info("A new pdf file was found - #{file}")
-      pdf = PDF::Reader.new(file)
+      tmp_file = FileManager.move_to_tmp(file)
 
-      pdf.pages.map { |page| page.text }
+      # create a pdf reader
+      pdf = FileManager.create_pdf(tmp_file)
+
+      pdf.pages.map { |page|  }
     end
 
     private
-
-    def self.is_pdf?(file)
-      File.extname(file) == ".pdf"
-    end
 
     def self.files
       Dir[Watcher.config.files].to_a
